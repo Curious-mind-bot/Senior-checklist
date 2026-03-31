@@ -1,32 +1,34 @@
-// Safe check for the Notification API
-const getNotification = () => {
-  if (typeof window !== 'undefined' && 'Notification' in window) {
-    return (window as any).Notification;
-  }
-  return null;
-};
-
 export const requestNotificationPermission = async () => {
-  const Notif = getNotification();
-  if (!Notif) return false;
+  // Check if we are in a browser and if Notifications exist
+  if (typeof window === 'undefined' || !('Notification' in window)) {
+    console.log('Notifications not supported on this device');
+    return false;
+  }
 
   try {
-    const permission = await Notif.requestPermission();
+    const permission = await window.Notification.requestPermission();
     return permission === 'granted';
-  } catch (e) {
+  } catch (error) {
+    console.error('Error requesting notification permission:', error);
     return false;
   }
 };
 
 export const checkAndScheduleReminders = (tasks: any[]) => {
-  const Notif = getNotification();
-  if (!Notif || Notif.permission !== 'granted') return;
+  // Guard clause: stop immediately if Notifications aren't supported
+  if (typeof window === 'undefined' || !('Notification' in window)) {
+    return;
+  }
 
-  // This part handles the actual reminder logic safely
+  // Double check permission before running logic
+  if (window.Notification.permission !== 'granted') {
+    return;
+  }
+
   const now = new Date();
   tasks.forEach(task => {
     if (task.time && !task.completed) {
-      // Logic for reminders goes here
+      // Your scheduling logic lives here safely
     }
   });
 };
