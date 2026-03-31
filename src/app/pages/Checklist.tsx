@@ -43,9 +43,12 @@ export function Checklist() {
     return saved ? JSON.parse(saved) : defaultTasks;
   });
 
-  const [notificationsEnabled, setNotificationsEnabled] = useState(
-    () => Notification.permission === 'granted'
-  );
+  const [notificationsEnabled, setNotificationsEnabled] = useState(() => {
+  if (typeof window !== 'undefined' && 'Notification' in window) {
+    return Notification.permission === 'granted';
+  }
+  return false;
+});
 
   useEffect(() => {
     localStorage.setItem('seniorChecklist', JSON.stringify(tasks));
