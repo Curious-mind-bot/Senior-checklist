@@ -1,3 +1,4 @@
+// Force update for iPhone fix 
 if (typeof window !== 'undefined' && !('Notification' in window)) {
   (window as any).Notification = {
     permission: 'denied',
